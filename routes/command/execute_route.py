@@ -16,7 +16,7 @@ def action():
 
     try:
         command = request.args.get('command')
-        session_id = int(request.args.get('session_id'))
+        session_id = str(request.args.get('session_id'))
 
         ip = get_owner_ip(db, session_id)
         if ip != client_ip:
