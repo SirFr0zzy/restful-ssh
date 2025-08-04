@@ -1,4 +1,6 @@
 # File was created on 04.08.25 at 03:15 by Elias Lauterbach
+from io import StringIO
+from urllib.parse import unquote
 
 from flask import jsonify, Blueprint, request
 from sqlalchemy.orm import sessionmaker
@@ -13,13 +15,13 @@ handler = Blueprint('/session', __name__)
 
 
 @handler.route('/session', methods=['POST'])
-@require_args('host', 'port', 'username')
 def action():
-    host = request.args.get('host')
-    port = int(request.args.get('port'))
-    user = request.args.get('username')
-    password = request.args.get('password')
-    ssh_key = request.args.get('ssh_key')
+    json = request.get_json()
+    host = json['host']
+    port = json['port']
+    user = json['username']
+    password = json.get('password')
+    ssh_key = json.get('ssh_key')
     client_ip = app.get_client_ip()
 
     agent_id = app.session_id
@@ -50,7 +52,7 @@ def action():
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # unsichere Hosts automatisch akzeptieren
 
     if ssh_key:
-        client.connect(hostname=host, port=port, username=user, pkey=ssh_key)
+        client.connect(hostname=host, port=port, username=user, pkey=parse_ssh_key(ssh_key))
     else:
         client.connect(hostname=host, port=port, username=user, password=password)
 
@@ -61,6 +63,9 @@ def action():
     }), 200
 
 
+def parse_ssh_key(ssh_key_raw: str) -> paramiko.PKey:
+    # Falls escaped übergeben (z. B. \n als 2 Zeichen), hier ersetzen:
+    fixed_key = ssh_key_raw.replace("\\n", "\n")
 
-
-
+    key_file = StringIO(fixed_key)
+    return paramiko.RSAKey.from_private_key(key_file)
