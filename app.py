@@ -5,7 +5,7 @@ import os
 import uuid
 
 from flask.cli import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 import routes
 
@@ -75,7 +75,8 @@ def get_database_engine():
 def wipe_database():
     engine = get_database_engine()
     with engine.connect() as conn:
-        conn.execute("DELETE FROM sessions")
+        conn.execute(text("DELETE FROM sessions;"))
+        conn.commit()
 
 if __name__ == '__main__':
     print(f"Agent Session: {session_id}")
