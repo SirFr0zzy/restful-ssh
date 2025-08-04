@@ -33,7 +33,10 @@ def action():
     SessionLocal = sessionmaker(bind=engine)
     session = SessionLocal()
 
+    session_id = str(uuid.uuid4())
+
     _session = Session(
+        id = session_id,
         host = host,
         port = port,
         user = user,
@@ -46,7 +49,6 @@ def action():
     session.add(_session)
     session.commit()
 
-    session_id = _session.id
 
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # unsichere Hosts automatisch akzeptieren
