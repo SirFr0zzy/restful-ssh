@@ -9,7 +9,7 @@ def register_routes(app):
     base_pkg = __package__  # z. B. "routes"
 
     def print_route_registration(modulename, route):
-        max_width = 150  # Breite bis zu den URLs
+        max_width = 80  # Breite bis zu den URLs
         dots = "." * max(1, max_width - len(modulename) - 2)
         print(f"\033[92m✅\033[0m Route registered: {modulename} {dots} {route}")
 
