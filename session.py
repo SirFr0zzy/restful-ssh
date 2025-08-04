@@ -6,7 +6,7 @@ Base = declarative_base()
 class Session(Base):
     __tablename__ = "sessions"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(String(36), primary_key=True)
     host = Column(String(255), nullable=False)
     port = Column(Integer, nullable=False)
     user = Column(Text, nullable=False)
